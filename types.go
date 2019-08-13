@@ -38,30 +38,6 @@ type CreateCustomerProfileFromTransactionPayload struct {
 	ProfileType            string               `json:"profileType,omitempty"`
 }
 
-type MobileDevice struct {
-	MobileDeviceId   string `json:"mobileDeviceId"`
-	Description      string `json:"description,omitempty"`
-	PhoneNumber      string `json:"phoneNumber,omitempty"`
-	DevicePlatform   string `json:"devicePlatform,omitempty"`
-	DeviceActivation string `json:"deviceActivation,omitempty"`
-}
-
-type GetMerchantDetailsRequest struct {
-	ANetApiRequest `json:"getMerchantDetailsRequest"`
-}
-
-type GetAUJobSummaryRequest struct {
-	Payload GetAUJobSummaryPayload `json:"getAUJobSummaryRequest"`
-}
-type GetAUJobSummaryPayload struct {
-	ANetApiRequest
-	Month string `json:"month"`
-}
-
-type Permission struct {
-	PermissionName string `json:"permissionName,omitempty"`
-}
-
 type SubscriptionDetail struct {
 	Id                        int       `json:"id"`
 	Name                      string    `json:"name,omitempty"`
@@ -95,11 +71,6 @@ type UpdateCustomerShippingAddressPayload struct {
 	DefaultShippingAddress bool               `json:"defaultShippingAddress,omitempty"`
 }
 
-type ARBUpdateSubscriptionResponse struct {
-	ANetApiResponse
-	Profile CustomerProfileId `json:"profile,omitempty"`
-}
-
 type DeleteCustomerPaymentProfileResponse struct {
 	ANetApiResponse
 }
@@ -131,10 +102,6 @@ type SendCustomerTransactionReceiptPayload struct {
 
 type TransactionDetailsTypeEmvDetails struct {
 	Tag []TransactionDetailsTypeEmvDetailsTag `json:"tag"` //min=0
-}
-
-type UpdateMerchantDetailsResponse struct {
-	ANetApiResponse
 }
 
 type UpdateSplitTenderGroupRequest struct {
@@ -204,65 +171,10 @@ type TokenMasked struct {
 	TokenRequestorId string `json:"tokenRequestorId,omitempty"`
 }
 
-type UpdateCustomerProfileRequest struct {
-	Payload UpdateCustomerProfilePayload `json:"updateCustomerProfileRequest"`
-}
-type UpdateCustomerProfilePayload struct {
-	ANetApiRequest
-	Profile *CustomerProfileInfoEx `json:"profile"`
-}
-
-type MobileDeviceRegistrationRequest struct {
-	Payload MobileDeviceRegistrationPayload `json:"mobileDeviceRegistrationRequest"`
-}
-type MobileDeviceRegistrationPayload struct {
-	ANetApiRequest
-	MobileDevice *MobileDevice `json:"mobileDevice"`
-}
-
-type CreateCustomerPaymentProfileResponse struct {
-	ANetApiResponse
-	CustomerProfileId        string `json:"customerProfileId,omitempty"`
-	CustomerPaymentProfileId string `json:"customerPaymentProfileId,omitempty"`
-	ValidationDirectResponse string `json:"validationDirectResponse,omitempty"`
-}
-
-type DeleteCustomerProfileResponse struct {
-	ANetApiResponse
-}
-
-type DeleteCustomerShippingAddressResponse struct {
-	ANetApiResponse
-}
-
-type GetCustomerPaymentProfileNonceResponse struct {
-	ANetApiResponse
-	OpaqueData *OpaqueData `json:"opaqueData,omitempty"`
-}
-
-type MobileDeviceRegistrationResponse struct {
-	ANetApiResponse
-}
-
-type CreateCustomerShippingAddressResponse struct {
-	ANetApiResponse
-	CustomerProfileId string `json:"customerProfileId,omitempty"`
-	CustomerAddressId string `json:"customerAddressId,omitempty"`
-}
-
 type Processor struct {
 	Name      string   `json:"name"`
 	Id        int      `json:"id"`
 	CardTypes []string `json:"cardTypes,omitempty"`
-}
-
-type GetCustomerShippingAddressRequest struct {
-	Payload GetCustomerShippingAddressPayload `json:"getCustomerShippingAddressRequest"`
-}
-type GetCustomerShippingAddressPayload struct {
-	ANetApiRequest
-	CustomerProfileId string `json:"customerProfileId"`
-	CustomerAddressId string `json:"customerAddressId,omitempty"`
 }
 
 type AuUpdate struct {
@@ -273,47 +185,6 @@ type AuUpdate struct {
 
 type ProfileTransAuthOnly struct {
 	ProfileTransOrder
-}
-
-type GetTransactionListForCustomerRequest struct {
-	Payload GetTransactionListForCustomerPayload `json:"getTransactionListForCustomerRequest"`
-}
-type GetTransactionListForCustomerPayload struct {
-	ANetApiRequest
-	CustomerProfileId        string                  `json:"customerProfileId"`
-	CustomerPaymentProfileId string                  `json:"customerPaymentProfileId,omitempty"`
-	Sorting                  *TransactionListSorting `json:"sorting,omitempty"`
-	Paging                   Paging                  `json:"paging,omitempty"`
-}
-
-type GetMerchantDetailsResponse struct {
-	ANetApiResponse
-	IsTestMode          bool             `json:"isTestMode,omitempty"`
-	Processors          []Processor      `json:"processors"`
-	MerchantName        string           `json:"merchantName"`
-	GatewayId           string           `json:"gatewayId"`
-	MarketTypes         []string         `json:"marketTypes"`
-	ProductCodes        []string         `json:"productCodes"`
-	PaymentMethods      []string         `json:"paymentMethods"`
-	Currencies          []string         `json:"currencies"`
-	PublicClientKey     string           `json:"publicClientKey,omitempty"`
-	BusinessInformation *CustomerAddress `json:"businessInformation,omitempty"`
-	MerchantTimeZone    string           `json:"merchantTimeZone,omitempty"`
-	ContactDetails      []ContactDetail  `json:"contactDetails,omitempty"`
-}
-
-type ARBGetSubscriptionStatusResponse struct {
-	ANetApiResponse
-	Status string `json:"status,omitempty"`
-}
-
-type DeleteCustomerPaymentProfileRequest struct {
-	Payload DeleteCustomerPaymentProfilePayload `json:"deleteCustomerPaymentProfileRequest"`
-}
-type DeleteCustomerPaymentProfilePayload struct {
-	ANetApiRequest
-	CustomerProfileId        string `json:"customerProfileId"`
-	CustomerPaymentProfileId string `json:"customerPaymentProfileId"`
 }
 
 type PaymentScheduleTypeInterval struct {
@@ -341,20 +212,6 @@ type TransactionSummary struct {
 	Profile           *CustomerProfileId   `json:"profile,omitempty"`
 }
 
-type DeleteCustomerProfileRequest struct {
-	Payload DeleteCustomerProfilePayload `json:"deleteCustomerProfileRequest"`
-}
-type DeleteCustomerProfilePayload struct {
-	ANetApiRequest
-	CustomerProfileId string `json:"customerProfileId"`
-}
-
-type AuResponse struct {
-	AuReasonCode      string `json:"auReasonCode"`
-	ProfileCount      uint   `json:"profileCount"`
-	ReasonDescription string `json:"reasonDescription"`
-}
-
 type AuDetails struct {
 	CustomerProfileID        uint   `json:"customerProfileID"`
 	CustomerPaymentProfileID uint   `json:"customerPaymentProfileID"`
@@ -363,21 +220,6 @@ type AuDetails struct {
 	UpdateTimeUTC            string `json:"updateTimeUTC"`
 	AuReasonCode             string `json:"auReasonCode"`
 	ReasonDescription        string `json:"reasonDescription"`
-}
-
-type CreateCustomerShippingAddressRequest struct {
-	Payload CreateCustomerShippingAddressPayload `json:"createCustomerShippingAddressRequest"`
-}
-type CreateCustomerShippingAddressPayload struct {
-	ANetApiRequest
-	CustomerProfileId      string           `json:"customerProfileId"`
-	Address                *CustomerAddress `json:"address"`
-	DefaultShippingAddress bool             `json:"defaultShippingAddress,omitempty"`
-}
-
-type ARBGetSubscriptionResponse struct {
-	ANetApiResponse
-	Subscription *ARBSubscriptionMasked `json:"subscription"`
 }
 
 type KeyManagementSchemeDUKPT struct {
@@ -393,14 +235,6 @@ type ProfileTransAmount struct {
 	Shipping  *ExtendedAmount `json:"shipping,omitempty"`
 	Duty      *ExtendedAmount `json:"duty,omitempty"`
 	LineItems []Item          `json:"lineItems,omitempty"` //min=0 max=30
-}
-
-type ARBGetSubscriptionStatusRequest struct {
-	Payload ARBGetSubscriptionStatusPayload `json:"ARBGetSubscriptionStatusRequest"`
-}
-type ARBGetSubscriptionStatusPayload struct {
-	ANetApiRequest
-	SubscriptionId string `json:"subscriptionId"`
 }
 
 type GetBatchStatisticsRequest struct {
@@ -443,16 +277,6 @@ type SecurePaymentContainerPayload struct {
 
 type IsAliveRequest struct {
 	RefId string `json:"refId,omitempty"`
-}
-
-type GetCustomerPaymentProfileNonceRequest struct {
-	Payload GetCustomerPaymentProfileNoncePayload `json:"getCustomerPaymentProfileNonceRequest"`
-}
-type GetCustomerPaymentProfileNoncePayload struct {
-	ANetApiRequest
-	ConnectedAccessToken     string `json:"connectedAccessToken"`
-	CustomerProfileId        string `json:"customerProfileId"`
-	CustomerPaymentProfileId string `json:"customerPaymentProfileId"`
 }
 
 type ValidateCustomerPaymentProfileResponse struct {
@@ -534,20 +358,6 @@ type ProfileTransCaptureOnly struct {
 	ApprovalCode string `json:"approvalCode"`
 }
 
-type GetAUJobSummaryResponse struct {
-	ANetApiResponse
-	AuSummary []AuResponse `json:"auSummary,omitempty"`
-}
-
-type ARBGetSubscriptionRequest struct {
-	Payload ARBGetSubscriptionPayload `json:"ARBGetSubscriptionRequest"`
-}
-type ARBGetSubscriptionPayload struct {
-	ANetApiRequest
-	SubscriptionId      string `json:"subscriptionId"`
-	IncludeTransactions bool   `json:"includeTransactions,omitempty"`
-}
-
 type HeldTransactionRequest struct {
 	Payload HeldTransactionPayload `json:"heldTransactionRequest"`
 }
@@ -574,16 +384,6 @@ type GetTransactionListResponse struct {
 	TotalNumInResultSet int                  `json:"totalNumInResultSet,omitempty"`
 }
 
-type UpdateCustomerPaymentProfileRequest struct {
-	Payload UpdateCustomerPaymentProfilePayload `json:"updateCustomerPaymentProfileRequest"`
-}
-type UpdateCustomerPaymentProfilePayload struct {
-	ANetApiRequest
-	CustomerProfileId string                    `json:"customerProfileId"`
-	PaymentProfile    *CustomerPaymentProfileEx `json:"paymentProfile"`
-	ValidationMode    string                    `json:"validationMode,omitempty"`
-}
-
 type PaymentSchedule struct {
 	Interval         *PaymentScheduleTypeInterval `json:"interval,omitempty"`
 	StartDate        time.Time                    `json:"startDate,omitempty"` //was date
@@ -601,14 +401,6 @@ type GetUnsettledTransactionListResponse struct {
 	ANetApiResponse
 	Transactions        []CustomerPaymentProfileListItem `json:"transactions,omitempty"`
 	TotalNumInResultSet int                              `json:"totalNumInResultSet,omitempty"`
-}
-
-type ARBCreateSubscriptionRequest struct {
-	Payload ARBCreateSubscriptionPayload `json:"ARBCreateSubscriptionRequest"`
-}
-type ARBCreateSubscriptionPayload struct {
-	ANetApiRequest
-	Subscription ARBSubscription `json:"subscription"`
 }
 
 type BatchStatistic struct {
@@ -635,34 +427,8 @@ type BatchStatistic struct {
 	RefundReturnedItemsCount  int     `json:"refundReturnedItemsCount,omitempty"`
 }
 
-type ARBGetSubscriptionListRequest struct {
-	Payload ARBGetSubscriptionListPayload `json:"ARBGetSubscriptionListRequest"`
-}
-type ARBGetSubscriptionListPayload struct {
-	ANetApiRequest
-	SearchType string                         `json:"searchType"`
-	Sorting    *ARBGetSubscriptionListSorting `json:"sorting,omitempty"`
-	Paging     *Paging                        `json:"paging,omitempty"`
-}
-
-type ListOfAUDetails struct {
-	AuUpdateOrAuDelete []string `json:"auUpdateOrAuDelete,omitempty"` //min=0
-}
-
 type SendCustomerTransactionReceiptResponse struct {
 	ANetApiResponse
-}
-
-type ValidateCustomerPaymentProfileRequest struct {
-	Payload ValidateCustomerPaymentProfilePayload `json:"validateCustomerPaymentProfileRequest"`
-}
-type ValidateCustomerPaymentProfilePayload struct {
-	ANetApiRequest
-	CustomerProfileId         string `json:"customerProfileId"`
-	CustomerPaymentProfileId  string `json:"customerPaymentProfileId"`
-	CustomerShippingAddressId string `json:"customerShippingAddressId,omitempty"`
-	CardCode                  string `json:"cardCode,omitempty"`
-	ValidationMode            string `json:"validationMode"`
 }
 
 type SubscriptionCustomerProfile struct {
@@ -676,24 +442,9 @@ type CustomerProfileEx struct {
 	CustomerProfileId string `json:"customerProfileId,omitempty"`
 }
 
-type ARBGetSubscriptionListResponse struct {
-	ANetApiResponse
-	TotalNumInResultSet int                  `json:"totalNumInResultSet,omitempty"`
-	SubscriptionDetails []SubscriptionDetail `json:"subscriptionDetails,omitempty"`
-}
-
 type GetBatchStatisticsResponse struct {
 	ANetApiResponse
 	Batch *BatchDetails `json:"batch,omitempty"`
-}
-
-type BankAccountMasked struct {
-	AccountType   BankAccountTypeEnum `json:"accountType,omitempty"`
-	RoutingNumber string              `json:"routingNumber"`
-	AccountNumber string              `json:"accountNumber"`
-	NameOnAccount string              `json:"nameOnAccount"`
-	EcheckType    string              `json:"echeckType,omitempty"`
-	BankName      string              `json:"bankName,omitempty"`
 }
 
 type SubscriptionPayment struct {
@@ -724,31 +475,12 @@ type FDSFilter struct {
 	Action string `json:"action"`
 }
 
-type MerchantContact struct {
-	MerchantName    string `json:"merchantName,omitempty"`
-	MerchantAddress string `json:"merchantAddress,omitempty"`
-	MerchantCity    string `json:"merchantCity,omitempty"`
-	MerchantState   string `json:"merchantState,omitempty"`
-	MerchantZip     string `json:"merchantZip,omitempty"`
-	MerchantPhone   string `json:"merchantPhone,omitempty"`
-}
-
 type CustomerProfileSummary struct {
 	CustomerProfileId  string    `json:"customerProfileId,omitempty"`
 	Description        string    `json:"description,omitempty"`
 	MerchantCustomerId string    `json:"merchantCustomerId"`
 	Email              string    `json:"email,omitempty"`
 	CreatedDate        time.Time `json:"createdDate"`
-}
-
-type GetAUJobDetailsRequest struct {
-	Payload GetAUJobDetailsPayload `json:"getAUJobDetailsRequest"`
-}
-type GetAUJobDetailsPayload struct {
-	ANetApiRequest
-	Month              string  `json:"month"`
-	ModifiedTypeFilter string  `json:"modifiedTypeFilter,omitempty"`
-	Paging             *Paging `json:"paging,omitempty"`
 }
 
 type UpdateHeldTransactionRequest struct {
@@ -792,15 +524,6 @@ type ProfileTransRefund struct {
 	TransId                   string   `json:"transId,omitempty"`
 }
 
-type CreateCustomerProfileTransactionRequest struct {
-	Payload CreateCustomerProfileTransactionPayload `json:"createCustomerProfileTransactionRequest"`
-}
-type CreateCustomerProfileTransactionPayload struct {
-	ANetApiRequest
-	Transaction  *ProfileTransaction `json:"transaction"`
-	ExtraOptions string              `json:"extraOptions,omitempty"`
-}
-
 type WebCheckOutDataTypeToken struct {
 	CardNumber     string `json:"cardNumber"`
 	ExpirationDate string `json:"expirationDate"`
@@ -831,25 +554,6 @@ type KeyValue struct {
 	Encoding            string               `json:"encoding"`
 	EncryptionAlgorithm string               `json:"encryptionAlgorithm"`
 	Scheme              *KeyManagementScheme `json:"scheme"`
-}
-
-type DeleteCustomerShippingAddressRequest struct {
-	Payload DeleteCustomerShippingAddressPayload `json:"deleteCustomerShippingAddressRequest"`
-}
-type DeleteCustomerShippingAddressPayload struct {
-	ANetApiRequest
-	CustomerProfileId string `json:"customerProfileId"`
-	CustomerAddressId string `json:"customerAddressId"`
-}
-
-type CreateCustomerPaymentProfileRequest struct {
-	Payload CreateCustomerPaymentProfilePayload `json:"createCustomerPaymentProfileRequest"`
-}
-type CreateCustomerPaymentProfilePayload struct {
-	ANetApiRequest
-	CustomerProfileId string                  `json:"customerProfileId"`
-	PaymentProfile    *CustomerPaymentProfile `json:"paymentProfile"`
-	ValidationMode    string                  `json:"validationMode,omitempty"`
 }
 
 type ProfileTransOrder struct {
@@ -926,45 +630,8 @@ type GetHostedPaymentPageResponse struct {
 	Token string `json:"token"`
 }
 
-type ARBCreateSubscriptionResponse struct {
-	ANetApiResponse
-	SubscriptionId string             `json:"subscriptionId,omitempty"`
-	Profile        *CustomerProfileId `json:"profile,omitempty"`
-}
-
 type UpdateCustomerProfileResponse struct {
 	ANetApiResponse
-}
-
-type MobileDeviceLoginRequest struct {
-	ANetApiRequest `json:"mobileDeviceLoginRequest"`
-}
-
-type GetAUJobDetailsResponse struct {
-	ANetApiResponse
-	TotalNumInResultSet int              `json:"totalNumInResultSet,omitempty"`
-	AuDetails           *ListOfAUDetails `json:"auDetails,omitempty"`
-}
-
-type ARBGetSubscriptionListSorting struct {
-	OrderBy         string `json:"orderBy"`
-	OrderDescending bool   `json:"orderDescending"`
-}
-
-type UpdateMerchantDetailsRequest struct {
-	Payload UpdateMerchantDetailsPayload `json:"updateMerchantDetailsRequest"`
-}
-type UpdateMerchantDetailsPayload struct {
-	ANetApiRequest
-	IsTestMode bool `json:"isTestMode"`
-}
-
-type ARBCancelSubscriptionRequest struct {
-	Payload ARBCancelSubscriptionPayload `json:"ARBCancelSubscriptionRequest"`
-}
-type ARBCancelSubscriptionPayload struct {
-	ANetApiRequest
-	SubscriptionId string `json:"subscriptionId"`
 }
 
 type UpdateCustomerPaymentProfileResponse struct {
@@ -993,11 +660,4 @@ type ReturnedItem struct {
 	Id        string    `json:"id"`
 	DateUTC   time.Time `json:"dateUTC"`
 	DateLocal time.Time `json:"dateLocal"`
-}
-
-type MobileDeviceLoginResponse struct {
-	ANetApiResponse
-	MerchantContact *MerchantContact `json:"merchantContact"`
-	UserPermissions []Permission     `json:"userPermissions"`
-	MerchantAccount *TransRetailInfo `json:"merchantAccount,omitempty"`
 }

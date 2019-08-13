@@ -49,7 +49,82 @@ type ARBSubscriptionMasked struct {
 	ArbTransactions *ARBTransactionList          `json:"arbTransactions,omitempty"`
 }
 
+type ARBGetSubscriptionStatusRequest struct {
+	Payload ARBGetSubscriptionStatusPayload `json:"ARBGetSubscriptionStatusRequest"`
+}
+type ARBGetSubscriptionStatusPayload struct {
+	ANetApiRequest
+	SubscriptionId string `json:"subscriptionId"`
+}
+
+type ARBGetSubscriptionRequest struct {
+	Payload ARBGetSubscriptionPayload `json:"ARBGetSubscriptionRequest"`
+}
+type ARBGetSubscriptionPayload struct {
+	ANetApiRequest
+	SubscriptionId      string `json:"subscriptionId"`
+	IncludeTransactions bool   `json:"includeTransactions,omitempty"`
+}
+
+type ARBCreateSubscriptionRequest struct {
+	Payload ARBCreateSubscriptionPayload `json:"ARBCreateSubscriptionRequest"`
+}
+type ARBCreateSubscriptionPayload struct {
+	ANetApiRequest
+	Subscription ARBSubscription `json:"subscription"`
+}
+
+type ARBGetSubscriptionListSorting struct {
+	OrderBy         string `json:"orderBy"`
+	OrderDescending bool   `json:"orderDescending"`
+}
+
+type ARBGetSubscriptionListRequest struct {
+	Payload ARBGetSubscriptionListPayload `json:"ARBGetSubscriptionListRequest"`
+}
+type ARBGetSubscriptionListPayload struct {
+	ANetApiRequest
+	SearchType string                         `json:"searchType"`
+	Sorting    *ARBGetSubscriptionListSorting `json:"sorting,omitempty"`
+	Paging     *Paging                        `json:"paging,omitempty"`
+}
+
+type ARBCancelSubscriptionRequest struct {
+	Payload ARBCancelSubscriptionPayload `json:"ARBCancelSubscriptionRequest"`
+}
+type ARBCancelSubscriptionPayload struct {
+	ANetApiRequest
+	SubscriptionId string `json:"subscriptionId"`
+}
+
 // -- response --
 type ARBCancelSubscriptionResponse struct {
 	ANetApiResponse
+}
+
+type ARBUpdateSubscriptionResponse struct {
+	ANetApiResponse
+	Profile CustomerProfileId `json:"profile,omitempty"`
+}
+
+type ARBGetSubscriptionStatusResponse struct {
+	ANetApiResponse
+	Status string `json:"status,omitempty"`
+}
+
+type ARBGetSubscriptionResponse struct {
+	ANetApiResponse
+	Subscription *ARBSubscriptionMasked `json:"subscription"`
+}
+
+type ARBGetSubscriptionListResponse struct {
+	ANetApiResponse
+	TotalNumInResultSet int                  `json:"totalNumInResultSet,omitempty"`
+	SubscriptionDetails []SubscriptionDetail `json:"subscriptionDetails,omitempty"`
+}
+
+type ARBCreateSubscriptionResponse struct {
+	ANetApiResponse
+	SubscriptionId string             `json:"subscriptionId,omitempty"`
+	Profile        *CustomerProfileId `json:"profile,omitempty"`
 }

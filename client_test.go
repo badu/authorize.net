@@ -43,7 +43,7 @@ func ExampleAuthenticateTest() {
 	}
 
 	fmt.Printf("%+v", response)
-	// Output: {RefId: Messages:{ResultCode:Ok Messages:[{Code:Successful. Text:Successful.}]} SessionToken:}
+	// Output: {RefId: Messages:{ResultCode:Ok Messages:[{Code:Successful. Text:Successful. Description:}]} SessionToken:}
 }
 
 // Note that credit card information and bank account information are mutually exclusive, so you should not submit both.
@@ -424,6 +424,64 @@ func ExampleGetCustomerProfileIds() {
 	// 36763407
 }
 
+func ExampleGetMerchantDetails() {
+	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
+	payload := GetMerchantDetailsRequest{
+		ANetApiRequest: ANetApiRequest{
+			MerchantAuthentication: MerchantAuthentication{
+				Name:           merchantId,
+				TransactionKey: merchantSecret,
+			},
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	var response GetMerchantDetailsResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	fmt.Printf("%#v", response)
+	// Output: authorize_net.GetMerchantDetailsResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, IsTestMode:false, Processors:[]authorize_net.Processor{authorize_net.Processor{Name:"First Data Nashville", Id:2, CardTypes:[]string{"A", "D", "M", "V"}}}, MerchantName:"Test Developer", GatewayId:"475314", MarketTypes:[]string{"eCommerce"}, ProductCodes:[]string{"CNP"}, PaymentMethods:[]string{"AmericanExpress", "Discover", "Echeck", "MasterCard", "Paypal", "Visa", "VisaCheckout", "ApplePay", "AndroidPay"}, Currencies:[]string{"USD"}, PublicClientKey:"5FcB6WrfHGS76gHW3v7btBCE3HuuBuke9Pj96Ztfn5R32G5ep42vne7MCWZtAucY", BusinessInformation:(*authorize_net.CustomerAddress)(0xc0003e4000), MerchantTimeZone:"America/Los_Angeles", ContactDetails:[]authorize_net.ContactDetail{authorize_net.ContactDetail{Email:"bmcmanus@visa.com", FirstName:"Sandbox", LastName:"Default"}}}
+}
+
+func ExampleUpdateMerchantDetails() {
+	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
+	payload := UpdateMerchantDetailsRequest{
+		Payload: UpdateMerchantDetailsPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			IsTestMode: true,
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	var response UpdateMerchantDetailsResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	fmt.Printf("%#v", response)
+	// Output:
+}
+
 func ExampleANetApi() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
 	fmt.Sprintf("%v", client)
@@ -550,12 +608,6 @@ func ExampleGetHostedProfilePage() {
 
 }
 
-func ExampleGetMerchantDetails() {
-	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
-
-}
-
 func ExampleGetSettledBatchList() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
 	fmt.Sprintf("%v", client)
@@ -641,12 +693,6 @@ func ExampleUpdateCustomerShippingAddress() {
 }
 
 func ExampleUpdateHeldTransaction() {
-	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
-
-}
-
-func ExampleUpdateMerchantDetails() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
 	fmt.Sprintf("%v", client)
 

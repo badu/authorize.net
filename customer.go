@@ -95,6 +95,121 @@ type GetCustomerProfileIdsRequest struct {
 	ANetApiRequest `json:"getCustomerProfileIdsRequest"`
 }
 
+type DeleteCustomerProfileRequest struct {
+	Payload DeleteCustomerProfilePayload `json:"deleteCustomerProfileRequest"`
+}
+type DeleteCustomerProfilePayload struct {
+	ANetApiRequest
+	CustomerProfileId string `json:"customerProfileId"`
+}
+
+type UpdateCustomerProfileRequest struct {
+	Payload UpdateCustomerProfilePayload `json:"updateCustomerProfileRequest"`
+}
+type UpdateCustomerProfilePayload struct {
+	ANetApiRequest
+	Profile *CustomerProfileInfoEx `json:"profile"`
+}
+
+type GetCustomerShippingAddressRequest struct {
+	Payload GetCustomerShippingAddressPayload `json:"getCustomerShippingAddressRequest"`
+}
+type GetCustomerShippingAddressPayload struct {
+	ANetApiRequest
+	CustomerProfileId string `json:"customerProfileId"`
+	CustomerAddressId string `json:"customerAddressId,omitempty"`
+}
+
+type GetTransactionListForCustomerRequest struct {
+	Payload GetTransactionListForCustomerPayload `json:"getTransactionListForCustomerRequest"`
+}
+type GetTransactionListForCustomerPayload struct {
+	ANetApiRequest
+	CustomerProfileId        string                  `json:"customerProfileId"`
+	CustomerPaymentProfileId string                  `json:"customerPaymentProfileId,omitempty"`
+	Sorting                  *TransactionListSorting `json:"sorting,omitempty"`
+	Paging                   Paging                  `json:"paging,omitempty"`
+}
+
+type DeleteCustomerPaymentProfileRequest struct {
+	Payload DeleteCustomerPaymentProfilePayload `json:"deleteCustomerPaymentProfileRequest"`
+}
+type DeleteCustomerPaymentProfilePayload struct {
+	ANetApiRequest
+	CustomerProfileId        string `json:"customerProfileId"`
+	CustomerPaymentProfileId string `json:"customerPaymentProfileId"`
+}
+
+type CreateCustomerShippingAddressRequest struct {
+	Payload CreateCustomerShippingAddressPayload `json:"createCustomerShippingAddressRequest"`
+}
+type CreateCustomerShippingAddressPayload struct {
+	ANetApiRequest
+	CustomerProfileId      string           `json:"customerProfileId"`
+	Address                *CustomerAddress `json:"address"`
+	DefaultShippingAddress bool             `json:"defaultShippingAddress,omitempty"`
+}
+
+type GetCustomerPaymentProfileNonceRequest struct {
+	Payload GetCustomerPaymentProfileNoncePayload `json:"getCustomerPaymentProfileNonceRequest"`
+}
+type GetCustomerPaymentProfileNoncePayload struct {
+	ANetApiRequest
+	ConnectedAccessToken     string `json:"connectedAccessToken"`
+	CustomerProfileId        string `json:"customerProfileId"`
+	CustomerPaymentProfileId string `json:"customerPaymentProfileId"`
+}
+
+type UpdateCustomerPaymentProfileRequest struct {
+	Payload UpdateCustomerPaymentProfilePayload `json:"updateCustomerPaymentProfileRequest"`
+}
+type UpdateCustomerPaymentProfilePayload struct {
+	ANetApiRequest
+	CustomerProfileId string                    `json:"customerProfileId"`
+	PaymentProfile    *CustomerPaymentProfileEx `json:"paymentProfile"`
+	ValidationMode    string                    `json:"validationMode,omitempty"`
+}
+
+type ValidateCustomerPaymentProfileRequest struct {
+	Payload ValidateCustomerPaymentProfilePayload `json:"validateCustomerPaymentProfileRequest"`
+}
+type ValidateCustomerPaymentProfilePayload struct {
+	ANetApiRequest
+	CustomerProfileId         string `json:"customerProfileId"`
+	CustomerPaymentProfileId  string `json:"customerPaymentProfileId"`
+	CustomerShippingAddressId string `json:"customerShippingAddressId,omitempty"`
+	CardCode                  string `json:"cardCode,omitempty"`
+	ValidationMode            string `json:"validationMode"`
+}
+
+type CreateCustomerProfileTransactionRequest struct {
+	Payload CreateCustomerProfileTransactionPayload `json:"createCustomerProfileTransactionRequest"`
+}
+type CreateCustomerProfileTransactionPayload struct {
+	ANetApiRequest
+	Transaction  *ProfileTransaction `json:"transaction"`
+	ExtraOptions string              `json:"extraOptions,omitempty"`
+}
+
+type DeleteCustomerShippingAddressRequest struct {
+	Payload DeleteCustomerShippingAddressPayload `json:"deleteCustomerShippingAddressRequest"`
+}
+type DeleteCustomerShippingAddressPayload struct {
+	ANetApiRequest
+	CustomerProfileId string `json:"customerProfileId"`
+	CustomerAddressId string `json:"customerAddressId"`
+}
+
+type CreateCustomerPaymentProfileRequest struct {
+	Payload CreateCustomerPaymentProfilePayload `json:"createCustomerPaymentProfileRequest"`
+}
+type CreateCustomerPaymentProfilePayload struct {
+	ANetApiRequest
+	CustomerProfileId string                  `json:"customerProfileId"`
+	PaymentProfile    *CustomerPaymentProfile `json:"paymentProfile"`
+	ValidationMode    string                  `json:"validationMode,omitempty"`
+}
+
 // -- response --
 type CreateCustomerProfileResponse struct {
 	ANetApiResponse
@@ -102,6 +217,15 @@ type CreateCustomerProfileResponse struct {
 	CustomerPaymentProfileIdList  []string `json:"customerPaymentProfileIdList"`
 	CustomerShippingAddressIdList []string `json:"customerShippingAddressIdList"`
 	ValidationDirectResponseList  []string `json:"validationDirectResponseList"`
+}
+
+type BankAccountMasked struct {
+	AccountType   BankAccountTypeEnum `json:"accountType,omitempty"`
+	RoutingNumber string              `json:"routingNumber"`
+	AccountNumber string              `json:"accountNumber"`
+	NameOnAccount string              `json:"nameOnAccount"`
+	EcheckType    string              `json:"echeckType,omitempty"`
+	BankName      string              `json:"bankName,omitempty"`
 }
 
 type PaymentMasked struct {
@@ -167,4 +291,30 @@ type GetCustomerPaymentProfileListResponse struct {
 type GetCustomerProfileIdsResponse struct {
 	ANetApiResponse
 	Ids []string `json:"ids"`
+}
+
+type CreateCustomerPaymentProfileResponse struct {
+	ANetApiResponse
+	CustomerProfileId        string `json:"customerProfileId,omitempty"`
+	CustomerPaymentProfileId string `json:"customerPaymentProfileId,omitempty"`
+	ValidationDirectResponse string `json:"validationDirectResponse,omitempty"`
+}
+
+type DeleteCustomerProfileResponse struct {
+	ANetApiResponse
+}
+
+type DeleteCustomerShippingAddressResponse struct {
+	ANetApiResponse
+}
+
+type GetCustomerPaymentProfileNonceResponse struct {
+	ANetApiResponse
+	OpaqueData *OpaqueData `json:"opaqueData,omitempty"`
+}
+
+type CreateCustomerShippingAddressResponse struct {
+	ANetApiResponse
+	CustomerProfileId string `json:"customerProfileId,omitempty"`
+	CustomerAddressId string `json:"customerAddressId,omitempty"`
 }
