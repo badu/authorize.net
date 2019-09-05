@@ -15,9 +15,9 @@ type GetAUJobDetailsRequest struct {
 }
 type GetAUJobDetailsPayload struct {
 	ANetApiRequest
-	Month              string  `json:"month"`
-	ModifiedTypeFilter string  `json:"modifiedTypeFilter,omitempty"`
-	Paging             *Paging `json:"paging,omitempty"`
+	Month              string `json:"month"`
+	ModifiedTypeFilter string `json:"modifiedTypeFilter,omitempty"`
+	Paging             Paging `json:"paging,omitempty"`
 }
 
 // -- response --

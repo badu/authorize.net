@@ -19,7 +19,7 @@ type MobileDeviceRegistrationRequest struct {
 }
 type MobileDeviceRegistrationPayload struct {
 	ANetApiRequest
-	MobileDevice *MobileDevice `json:"mobileDevice"`
+	MobileDevice *MobileDevice `json:"mobileDevice,omitempty"`
 }
 
 // -- response --
@@ -39,8 +39,8 @@ type Permission struct {
 
 type MobileDeviceLoginResponse struct {
 	ANetApiResponse
-	MerchantContact *MerchantContact `json:"merchantContact"`
-	UserPermissions []Permission     `json:"userPermissions"`
+	MerchantContact *MerchantContact `json:"merchantContact,omitempty"`
+	UserPermissions []Permission     `json:"userPermissions,omitempty"`
 	MerchantAccount *TransRetailInfo `json:"merchantAccount,omitempty"`
 }
 

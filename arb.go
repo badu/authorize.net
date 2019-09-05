@@ -23,7 +23,7 @@ type ARBSubscription struct {
 type ARBUpdateSubscriptionPayload struct {
 	ANetApiRequest
 	SubscriptionId string           `json:"subscriptionId"`
-	Subscription   *ARBSubscription `json:"subscription"`
+	Subscription   *ARBSubscription `json:"subscription,omitempty"`
 }
 
 type ArbTransaction struct {
@@ -74,19 +74,14 @@ type ARBCreateSubscriptionPayload struct {
 	Subscription ARBSubscription `json:"subscription"`
 }
 
-type ARBGetSubscriptionListSorting struct {
-	OrderBy         string `json:"orderBy"`
-	OrderDescending bool   `json:"orderDescending"`
-}
-
 type ARBGetSubscriptionListRequest struct {
 	Payload ARBGetSubscriptionListPayload `json:"ARBGetSubscriptionListRequest"`
 }
 type ARBGetSubscriptionListPayload struct {
 	ANetApiRequest
-	SearchType string                         `json:"searchType"`
-	Sorting    *ARBGetSubscriptionListSorting `json:"sorting,omitempty"`
-	Paging     *Paging                        `json:"paging,omitempty"`
+	SearchType string  `json:"searchType"`
+	Sorting    Sorting `json:"sorting,omitempty"`
+	Paging     Paging  `json:"paging,omitempty"`
 }
 
 type ARBCancelSubscriptionRequest struct {
@@ -114,7 +109,7 @@ type ARBGetSubscriptionStatusResponse struct {
 
 type ARBGetSubscriptionResponse struct {
 	ANetApiResponse
-	Subscription *ARBSubscriptionMasked `json:"subscription"`
+	Subscription *ARBSubscriptionMasked `json:"subscription,omitempty"`
 }
 
 type ARBGetSubscriptionListResponse struct {

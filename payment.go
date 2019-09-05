@@ -1,6 +1,8 @@
 package authorize_net
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -45,9 +47,9 @@ type PayPal struct {
 }
 
 type OpaqueData struct {
-	DataDescriptor      string    `json:"dataDescriptor"`
-	DataValue           string    `json:"dataValue"`
-	DataKey             string    `json:"dataKey,omitempty"`
+	DataDescriptor      string    `json:"dataDescriptor"`    // use "COMMON.VCO.ONLINE.PAYMENT" for Visa checkout transactions
+	DataValue           string    `json:"dataValue"`         // Base64 encoded data that contains encrypted payment data.
+	DataKey             string    `json:"dataKey,omitempty"` // The encryption key used to encrypt the payment data.
 	ExpirationTimeStamp time.Time `json:"expirationTimeStamp,omitempty"`
 }
 
@@ -87,24 +89,24 @@ type Solution struct {
 }
 
 type Order struct {
-	InvoiceNumber                  string    `json:"invoiceNumber,omitempty"`
-	Description                    string    `json:"description,omitempty"`
-	DiscountAmount                 float64   `json:"discountAmount,omitempty"`
-	TaxIsAfterDiscount             bool      `json:"taxIsAfterDiscount,omitempty"`
-	TotalTaxTypeCode               string    `json:"totalTaxTypeCode,omitempty"`
-	PurchaserVATRegistrationNumber string    `json:"purchaserVATRegistrationNumber,omitempty"`
-	MerchantVATRegistrationNumber  string    `json:"merchantVATRegistrationNumber,omitempty"`
-	VatInvoiceReferenceNumber      string    `json:"vatInvoiceReferenceNumber,omitempty"`
-	PurchaserCode                  string    `json:"purchaserCode,omitempty"`
-	SummaryCommodityCode           string    `json:"summaryCommodityCode,omitempty"`
-	PurchaseOrderDateUTC           time.Time `json:"purchaseOrderDateUTC,omitempty"` //was Date
-	SupplierOrderReference         string    `json:"supplierOrderReference,omitempty"`
-	AuthorizedContactName          string    `json:"authorizedContactName,omitempty"`
-	CardAcceptorRefNumber          string    `json:"cardAcceptorRefNumber,omitempty"`
-	AmexDataTAA1                   string    `json:"amexDataTAA1,omitempty"`
-	AmexDataTAA2                   string    `json:"amexDataTAA2,omitempty"`
-	AmexDataTAA3                   string    `json:"amexDataTAA3,omitempty"`
-	AmexDataTAA4                   string    `json:"amexDataTAA4,omitempty"`
+	InvoiceNumber                  string  `json:"invoiceNumber,omitempty"`
+	Description                    string  `json:"description,omitempty"`
+	DiscountAmount                 float64 `json:"discountAmount,omitempty"`
+	TaxIsAfterDiscount             bool    `json:"taxIsAfterDiscount,omitempty"`
+	TotalTaxTypeCode               string  `json:"totalTaxTypeCode,omitempty"`
+	PurchaserVATRegistrationNumber string  `json:"purchaserVATRegistrationNumber,omitempty"`
+	MerchantVATRegistrationNumber  string  `json:"merchantVATRegistrationNumber,omitempty"`
+	VatInvoiceReferenceNumber      string  `json:"vatInvoiceReferenceNumber,omitempty"`
+	PurchaserCode                  string  `json:"purchaserCode,omitempty"`
+	SummaryCommodityCode           string  `json:"summaryCommodityCode,omitempty"`
+	PurchaseOrderDateUTC           string  `json:"purchaseOrderDateUTC,omitempty"` //was Date
+	SupplierOrderReference         string  `json:"supplierOrderReference,omitempty"`
+	AuthorizedContactName          string  `json:"authorizedContactName,omitempty"`
+	CardAcceptorRefNumber          string  `json:"cardAcceptorRefNumber,omitempty"`
+	AmexDataTAA1                   string  `json:"amexDataTAA1,omitempty"`
+	AmexDataTAA2                   string  `json:"amexDataTAA2,omitempty"`
+	AmexDataTAA3                   string  `json:"amexDataTAA3,omitempty"`
+	AmexDataTAA4                   string  `json:"amexDataTAA4,omitempty"`
 }
 
 type Item struct {
@@ -140,6 +142,14 @@ type ExtendedAmount struct {
 	Amount      float64 `json:"amount"`
 	Name        string  `json:"name,omitempty"`
 	Description string  `json:"description,omitempty"`
+}
+
+type ProfileTransAmount struct {
+	Amount    float64         `json:"amount"`
+	Tax       *ExtendedAmount `json:"tax,omitempty"`
+	Shipping  *ExtendedAmount `json:"shipping,omitempty"`
+	Duty      *ExtendedAmount `json:"duty,omitempty"`
+	LineItems []Item          `json:"lineItems,omitempty"` //min=0 max=30
 }
 
 type DriversLicense struct {
@@ -350,4 +360,228 @@ type CreateTransactionResponse struct {
 	ANetApiResponse
 	TransactionResponse TransactionResponse   `json:"transactionResponse"`
 	ProfileResponse     CreateProfileResponse `json:"profileResponse,omitempty"`
+}
+
+type TransactionSummary struct {
+	TransId           string               `json:"transId"`
+	SubmitTimeUTC     time.Time            `json:"submitTimeUTC"`
+	SubmitTimeLocal   time.Time            `json:"submitTimeLocal"`
+	TransactionStatus string               `json:"transactionStatus"`
+	InvoiceNumber     string               `json:"invoiceNumber,omitempty"`
+	FirstName         string               `json:"firstName,omitempty"`
+	LastName          string               `json:"lastName,omitempty"`
+	AccountType       string               `json:"accountType"`
+	AccountNumber     string               `json:"accountNumber"`
+	SettleAmount      float64              `json:"settleAmount"`
+	MarketType        string               `json:"marketType,omitempty"`
+	Product           string               `json:"product,omitempty"`
+	MobileDeviceId    string               `json:"mobileDeviceId,omitempty"`
+	Subscription      *SubscriptionPayment `json:"subscription,omitempty"`
+	HasReturnedItems  bool                 `json:"hasReturnedItems,omitempty"`
+	FraudInformation  *FraudInformation    `json:"fraudInformation,omitempty"`
+	Profile           *CustomerProfileId   `json:"profile,omitempty"`
+}
+
+const (
+	// RFC3339 a subset of the ISO8601 timestamp format. e.g 2014-04-29T18:30:38Z
+	ISO8601TimeFormat = "2006-01-02T15:04:05Z"
+	// same as above, but no ”Z”
+	ISO8601NoZTimeFormat = "2006-01-02T15:04:05"
+)
+
+func (t *TransactionSummary) UnmarshalJSON(data []byte) error {
+	type Alias TransactionSummary
+	aux := &struct {
+		SubmitTimeUTC   string `json:"submitTimeUTC"`
+		SubmitTimeLocal string `json:"submitTimeLocal"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+	var err error
+	if err = json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if t.SubmitTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.SubmitTimeUTC); err != nil {
+		return err
+	}
+	if t.SubmitTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.SubmitTimeLocal); err != nil {
+		return err
+	}
+	return nil
+}
+
+type GetTransactionListResponse struct {
+	ANetApiResponse
+	Transactions        []TransactionSummary `json:"transactions,omitempty"`
+	TotalNumInResultSet int                  `json:"totalNumInResultSet,omitempty"`
+}
+
+type SendCustomerTransactionReceiptRequest struct {
+	Payload SendCustomerTransactionReceiptPayload `json:"sendCustomerTransactionReceiptRequest"`
+}
+
+type SendCustomerTransactionReceiptPayload struct {
+	ANetApiRequest
+	TransId       string         `json:"transId"`
+	CustomerEmail string         `json:"customerEmail"`
+	EmailSettings *EmailSettings `json:"emailSettings,omitempty"`
+}
+
+type SendCustomerTransactionReceiptResponse struct {
+	ANetApiResponse
+}
+
+type GetTransactionDetailsRequest struct {
+	Payload GetTransactionDetailsPayload `json:"getTransactionDetailsRequest"`
+}
+type GetTransactionDetailsPayload struct {
+	ANetApiRequest
+	TransId string `json:"transId"`
+}
+
+type BatchDetails struct {
+	BatchId             string           `json:"batchId"`
+	SettlementTimeUTC   time.Time        `json:"settlementTimeUTC,omitempty"`
+	SettlementTimeLocal time.Time        `json:"settlementTimeLocal,omitempty"`
+	SettlementState     string           `json:"settlementState"`
+	PaymentMethod       string           `json:"paymentMethod,omitempty"`
+	MarketType          string           `json:"marketType,omitempty"`
+	Product             string           `json:"product,omitempty"`
+	Statistics          []BatchStatistic `json:"statistics,omitempty"`
+}
+
+type TransactionDetails struct {
+	TransId                   string                            `json:"transId"`
+	RefTransId                string                            `json:"refTransId,omitempty"`
+	SplitTenderId             string                            `json:"splitTenderId,omitempty"`
+	SubmitTimeUTC             time.Time                         `json:"submitTimeUTC"`
+	SubmitTimeLocal           time.Time                         `json:"submitTimeLocal"`
+	TransactionType           string                            `json:"transactionType"`
+	TransactionStatus         string                            `json:"transactionStatus"`
+	ResponseCode              int                               `json:"responseCode"`
+	ResponseReasonCode        int                               `json:"responseReasonCode"`
+	Subscription              *SubscriptionPayment              `json:"subscription,omitempty"`
+	ResponseReasonDescription string                            `json:"responseReasonDescription"`
+	AuthCode                  string                            `json:"authCode,omitempty"`
+	AvsResponse               string                            `json:"avsResponse,omitempty"`
+	CardCodeResponse          string                            `json:"cardCodeResponse,omitempty"`
+	CavvResponse              string                            `json:"cavvResponse,omitempty"`
+	FdsFilterAction           string                            `json:"fdsFilterAction,omitempty"`
+	FdsFilters                []FDSFilter                       `json:"fdsFilters,omitempty"`
+	Batch                     *BatchDetails                     `json:"batch,omitempty"`
+	Order                     *OrderEx                          `json:"order,omitempty"`
+	RequestedAmount           float64                           `json:"requestedAmount,omitempty"`
+	AuthAmount                float64                           `json:"authAmount"`
+	SettleAmount              float64                           `json:"settleAmount"`
+	Tax                       *ExtendedAmount                   `json:"tax,omitempty"`
+	Shipping                  *ExtendedAmount                   `json:"shipping,omitempty"`
+	Duty                      *ExtendedAmount                   `json:"duty,omitempty"`
+	LineItems                 []Item                            `json:"lineItems,omitempty"`
+	PrepaidBalanceRemaining   float64                           `json:"prepaidBalanceRemaining,omitempty"`
+	TaxExempt                 bool                              `json:"taxExempt,omitempty"`
+	Payment                   *PaymentMasked                    `json:"payment,omitempty"`
+	Customer                  *CustomerData                     `json:"customer,omitempty"`
+	BillTo                    *CustomerAddress                  `json:"billTo,omitempty"`
+	ShipTo                    *NameAndAddress                   `json:"shipTo,omitempty"`
+	RecurringBilling          bool                              `json:"recurringBilling,omitempty"`
+	CustomerIP                string                            `json:"customerIP,omitempty"`
+	Product                   string                            `json:"product,omitempty"`
+	EntryMode                 string                            `json:"entryMode,omitempty"`
+	MarketType                string                            `json:"marketType,omitempty"`
+	MobileDeviceId            string                            `json:"mobileDeviceId,omitempty"`
+	CustomerSignature         string                            `json:"customerSignature,omitempty"`
+	ReturnedItems             []ReturnedItem                    `json:"returnedItems,omitempty"`
+	Solution                  *Solution                         `json:"solution,omitempty"`
+	EmvDetails                *TransactionDetailsTypeEmvDetails `json:"emvDetails,omitempty"`
+	Profile                   *CustomerProfileId                `json:"profile,omitempty"`
+	Surcharge                 *ExtendedAmount                   `json:"surcharge,omitempty"`
+	EmployeeId                string                            `json:"employeeId,omitempty"`
+	Tip                       *ExtendedAmount                   `json:"tip,omitempty"`
+	OtherTax                  *OtherTax                         `json:"otherTax,omitempty"`
+	ShipFrom                  *NameAndAddress                   `json:"shipFrom,omitempty"`
+}
+
+func (t *TransactionDetails) UnmarshalJSON(data []byte) error {
+	type Alias TransactionDetails
+	type BatchDetailsNoTime struct {
+		BatchId             string           `json:"batchId"`
+		SettlementTimeUTC   string           `json:"settlementTimeUTC,omitempty"`
+		SettlementTimeLocal string           `json:"settlementTimeLocal,omitempty"`
+		SettlementState     string           `json:"settlementState"`
+		PaymentMethod       string           `json:"paymentMethod,omitempty"`
+		MarketType          string           `json:"marketType,omitempty"`
+		Product             string           `json:"product,omitempty"`
+		Statistics          []BatchStatistic `json:"statistics,omitempty"`
+	}
+	aux := &struct {
+		SubmitTimeUTC   string `json:"submitTimeUTC"`
+		SubmitTimeLocal string `json:"submitTimeLocal"`
+		*Alias
+		Batch *BatchDetailsNoTime `json:"batch,omitempty"`
+	}{
+		Alias: (*Alias)(t),
+	}
+	var err error
+	if err = json.Unmarshal(data, &aux); err != nil {
+		fmt.Println("HERE")
+		return err
+	}
+	if t.SubmitTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.SubmitTimeUTC); err != nil {
+		return err
+	}
+	if t.SubmitTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.SubmitTimeLocal); err != nil {
+		return err
+	}
+	if aux.Batch != nil {
+		t.Batch = &BatchDetails{
+			BatchId:         aux.Batch.BatchId,
+			SettlementState: aux.Batch.SettlementState,
+			PaymentMethod:   aux.Batch.PaymentMethod,
+			MarketType:      aux.Batch.MarketType,
+			Product:         aux.Batch.Product,
+			Statistics:      aux.Batch.Statistics,
+		}
+		if t.Batch.SettlementTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.Batch.SettlementTimeUTC); err != nil {
+			return err
+		}
+		if t.Batch.SettlementTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.Batch.SettlementTimeLocal); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+type GetTransactionDetailsResponse struct {
+	ANetApiResponse
+	Transaction *TransactionDetails `json:"transaction,omitempty"`
+	ClientId    string              `json:"clientId,omitempty"`
+	TransrefId  string              `json:"transrefId,omitempty"`
+}
+
+type GetTransactionListRequest struct {
+	Payload GetTransactionListPayload `json:"getTransactionListRequest"`
+}
+type GetTransactionListPayload struct {
+	ANetApiRequest
+	BatchId string  `json:"batchId,omitempty"`
+	Sorting Sorting `json:"sorting"`
+	Paging  Paging  `json:"paging"`
+}
+
+type GetUnsettledTransactionListRequest struct {
+	Payload GetUnsettledTransactionListPayload `json:"getUnsettledTransactionListRequest"`
+}
+
+type GetUnsettledTransactionListPayload struct {
+	ANetApiRequest
+	Status  string  `json:"status,omitempty"`
+	Sorting Sorting `json:"sorting"`
+	Paging  Paging  `json:"paging"`
+}
+
+type GetUnsettledTransactionListResponse struct {
+	ANetApiResponse
+	Transactions        []CustomerPaymentProfileListItem `json:"transactions,omitempty"`
+	TotalNumInResultSet int                              `json:"totalNumInResultSet,omitempty"`
 }

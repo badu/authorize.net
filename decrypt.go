@@ -7,7 +7,7 @@ type DecryptPaymentDataRequest struct {
 }
 type DecryptPaymentDataPayload struct {
 	ANetApiRequest
-	OpaqueData *OpaqueData `json:"opaqueData"`
+	OpaqueData *OpaqueData `json:"opaqueData,omitempty"`
 	CallId     string      `json:"callId,omitempty"`
 }
 

@@ -23,13 +23,13 @@ type UpdateMerchantDetailsResponse struct {
 type GetMerchantDetailsResponse struct {
 	ANetApiResponse
 	IsTestMode          bool             `json:"isTestMode,omitempty"`
-	Processors          []Processor      `json:"processors"`
+	Processors          []Processor      `json:"processors,omitempty"`
 	MerchantName        string           `json:"merchantName"`
 	GatewayId           string           `json:"gatewayId"`
-	MarketTypes         []string         `json:"marketTypes"`
-	ProductCodes        []string         `json:"productCodes"`
-	PaymentMethods      []string         `json:"paymentMethods"`
-	Currencies          []string         `json:"currencies"`
+	MarketTypes         []string         `json:"marketTypes,omitempty"`
+	ProductCodes        []string         `json:"productCodes,omitempty"`
+	PaymentMethods      []string         `json:"paymentMethods,omitempty"`
+	Currencies          []string         `json:"currencies,omitempty"`
 	PublicClientKey     string           `json:"publicClientKey,omitempty"`
 	BusinessInformation *CustomerAddress `json:"businessInformation,omitempty"`
 	MerchantTimeZone    string           `json:"merchantTimeZone,omitempty"`
