@@ -1,65 +1,12 @@
 package authorize_net
 
-import (
-	"time"
-)
-
-type KeyBlock struct {
-	Value KeyValue `json:"value"`
-}
-
-type EmailSettings struct {
-	Settings []Setting
-	Version  int `json:"version,omitempty"`
-}
-
-type CreditCardMasked struct {
-	CardNumber     string   `json:"cardNumber"`
-	ExpirationDate string   `json:"expirationDate"`
-	CardType       string   `json:"cardType,omitempty"`
-	CardArt        *CardArt `json:"cardArt,omitempty"`
-	IssuerNumber   string   `json:"issuerNumber,omitempty"`
-	IsPaymentToken bool     `json:"isPaymentToken,omitempty"`
-}
-
 type GetSettledBatchListResponse struct {
 	ANetApiResponse
 	BatchList []BatchDetails `json:"batchList,omitempty"`
 }
 
-type SubscriptionDetail struct {
-	Id                        int       `json:"id"`
-	Name                      string    `json:"name,omitempty"`
-	Status                    string    `json:"status"`
-	CreateTimeStampUTC        time.Time `json:"createTimeStampUTC"`
-	FirstName                 string    `json:"firstName,omitempty"`
-	LastName                  string    `json:"lastName,omitempty"`
-	TotalOccurrences          int       `json:"totalOccurrences"`
-	PastOccurrences           int       `json:"pastOccurrences"`
-	PaymentMethod             string    `json:"paymentMethod"`
-	AccountNumber             string    `json:"accountNumber,omitempty"`
-	Invoice                   string    `json:"invoice,omitempty"`
-	Amount                    float64   `json:"amount"`
-	CurrencyCode              string    `json:"currencyCode,omitempty"`
-	CustomerProfileId         int       `json:"customerProfileId"`
-	CustomerPaymentProfileId  int       `json:"customerPaymentProfileId"`
-	CustomerShippingProfileId int       `json:"customerShippingProfileId,omitempty"`
-}
-
 type UpdateSplitTenderGroupResponse struct {
 	ANetApiResponse
-}
-
-type CardArt struct {
-	CardBrand       string `json:"cardBrand,omitempty"`
-	CardImageHeight string `json:"cardImageHeight,omitempty"`
-	CardImageUrl    string `json:"cardImageUrl,omitempty"`
-	CardImageWidth  string `json:"cardImageWidth,omitempty"`
-	CardType        string `json:"cardType,omitempty"`
-}
-
-type TransactionDetailsTypeEmvDetails struct {
-	Tag []TransactionDetailsTypeEmvDetailsTag `json:"tag"` //min=0
 }
 
 type UpdateSplitTenderGroupRequest struct {
@@ -71,28 +18,10 @@ type UpdateSplitTenderGroupPayload struct {
 	SplitTenderStatus string `json:"splitTenderStatus"`
 }
 
-type TokenMasked struct {
-	TokenSource      string `json:"tokenSource,omitempty"`
-	TokenNumber      string `json:"tokenNumber"`
-	ExpirationDate   string `json:"expirationDate"`
-	TokenRequestorId string `json:"tokenRequestorId,omitempty"`
-}
-
-type Processor struct {
-	Name      string   `json:"name"`
-	Id        int      `json:"id"`
-	CardTypes []string `json:"cardTypes,omitempty"`
-}
-
 type AuUpdate struct {
 	AuDetails
 	NewCreditCard *CreditCardMasked `json:"newCreditCard,omitempty"`
 	OldCreditCard *CreditCardMasked `json:"oldCreditCard,omitempty"`
-}
-
-type PaymentScheduleTypeInterval struct {
-	Length int    `json:"length"`
-	Unit   string `json:"unit"`
 }
 
 type AuDetails struct {
@@ -164,9 +93,9 @@ type GetSettledBatchListRequest struct {
 }
 type GetSettledBatchListPayload struct {
 	ANetApiRequest
-	IncludeStatistics   bool      `json:"includeStatistics,omitempty"`
-	FirstSettlementDate time.Time `json:"firstSettlementDate,omitempty"`
-	LastSettlementDate  time.Time `json:"lastSettlementDate,omitempty"`
+	IncludeStatistics   bool `json:"includeStatistics,omitempty"`
+	FirstSettlementDate Date `json:"firstSettlementDate,omitempty"`
+	LastSettlementDate  Date `json:"lastSettlementDate,omitempty"`
 }
 
 type LogoutRequest struct {
@@ -212,84 +141,21 @@ type HeldTransactionPayload struct {
 	RefTransId string `json:"refTransId"`
 }
 
-type CustomerPaymentProfileEx struct {
-	CustomerPaymentProfile
-	CustomerPaymentProfileId string `json:"customerPaymentProfileId,omitempty"`
-}
-
-type PaymentSchedule struct {
-	Interval         *PaymentScheduleTypeInterval `json:"interval,omitempty"`
-	StartDate        time.Time                    `json:"startDate,omitempty"` //was date
-	TotalOccurrences int                          `json:"totalOccurrences,omitempty"`
-	TrialOccurrences int                          `json:"trialOccurrences,omitempty"`
-}
-
-type ContactDetail struct {
-	Email     string `json:"email,omitempty"`
-	FirstName string `json:"firstName,omitempty"`
-	LastName  string `json:"lastName,omitempty"`
-}
-
-type BatchStatistic struct {
-	AccountType               string  `json:"accountType"`
-	ChargeAmount              float64 `json:"chargeAmount"`
-	ChargeCount               int     `json:"chargeCount"`
-	RefundAmount              float64 `json:"refundAmount"`
-	RefundCount               int     `json:"refundCount"`
-	VoidCount                 int     `json:"voidCount"`
-	DeclineCount              int     `json:"declineCount"`
-	ErrorCount                int     `json:"errorCount"`
-	ReturnedItemAmount        float64 `json:"returnedItemAmount,omitempty"`
-	ReturnedItemCount         int     `json:"returnedItemCount,omitempty"`
-	ChargebackAmount          float64 `json:"chargebackAmount,omitempty"`
-	ChargebackCount           int     `json:"chargebackCount,omitempty"`
-	CorrectionNoticeCount     int     `json:"correctionNoticeCount,omitempty"`
-	ChargeChargeBackAmount    float64 `json:"chargeChargeBackAmount,omitempty"`
-	ChargeChargeBackCount     int     `json:"chargeChargeBackCount,omitempty"`
-	RefundChargeBackAmount    float64 `json:"refundChargeBackAmount,omitempty"`
-	RefundChargeBackCount     int     `json:"refundChargeBackCount,omitempty"`
-	ChargeReturnedItemsAmount float64 `json:"chargeReturnedItemsAmount,omitempty"`
-	ChargeReturnedItemsCount  int     `json:"chargeReturnedItemsCount,omitempty"`
-	RefundReturnedItemsAmount float64 `json:"refundReturnedItemsAmount,omitempty"`
-	RefundReturnedItemsCount  int     `json:"refundReturnedItemsCount,omitempty"`
-}
-
-type SubscriptionCustomerProfile struct {
-	CustomerProfileEx
-	PaymentProfile  *CustomerPaymentProfileMasked `json:"paymentProfile,omitempty"`
-	ShippingProfile *CustomerAddressEx            `json:"shippingProfile,omitempty"`
-}
-
-type CustomerProfileEx struct {
-	CustomerProfileBase
-	CustomerProfileId string `json:"customerProfileId,omitempty"`
-}
-
 type GetBatchStatisticsResponse struct {
 	ANetApiResponse
 	Batch *BatchDetails `json:"batch,omitempty"`
-}
-
-type SubscriptionPayment struct {
-	Id     int `json:"id"`
-	PayNum int `json:"payNum"`
 }
 
 type UpdateCustomerShippingAddressResponse struct {
 	ANetApiResponse
 }
 
-type FDSFilter struct {
-	Name   string `json:"name"`
-	Action string `json:"action"`
-}
-
 type CustomerProfileSummary struct {
-	CustomerProfileId  string    `json:"customerProfileId,omitempty"`
-	Description        string    `json:"description,omitempty"`
-	MerchantCustomerId string    `json:"merchantCustomerId"`
-	Email              string    `json:"email,omitempty"`
-	CreatedDate        time.Time `json:"createdDate"`
+	CustomerProfileId  string `json:"customerProfileId,omitempty"`
+	Description        string `json:"description,omitempty"`
+	MerchantCustomerId string `json:"merchantCustomerId"`
+	Email              string `json:"email,omitempty"`
+	CreatedDate        Date   `json:"createdDate"`
 }
 
 type UpdateHeldTransactionRequest struct {
@@ -300,25 +166,9 @@ type UpdateHeldTransactionPayload struct {
 	HeldTransactionRequest *HeldTransactionRequest `json:"heldTransactionRequest,omitempty"`
 }
 
-type TransactionDetailsTypeEmvDetailsTag struct {
-	TagId string `json:"tagId"`
-	Data  string `json:"data"`
-}
-
 type KeyManagementSchemeDUKPTMode struct {
 	Pin  string `json:"pin,omitempty"`
 	Data string `json:"data,omitempty"`
-}
-
-type CustomerProfileId struct {
-	CustomerProfileId        string `json:"customerProfileId"`
-	CustomerPaymentProfileId string `json:"customerPaymentProfileId,omitempty"`
-	CustomerAddressId        string `json:"customerAddressId,omitempty"`
-}
-
-type OrderEx struct {
-	Order
-	PurchaseOrderNumber string `json:"purchaseOrderNumber,omitempty"`
 }
 
 type WebCheckOutDataTypeToken struct {
@@ -340,12 +190,6 @@ type GetHostedProfilePagePayload struct {
 
 type IsAliveResponse struct {
 	ANetApiResponse
-}
-
-type KeyValue struct {
-	Encoding            string               `json:"encoding"`
-	EncryptionAlgorithm string               `json:"encryptionAlgorithm"`
-	Scheme              *KeyManagementScheme `json:"scheme,omitempty"`
 }
 
 type UpdateHeldTransactionResponse struct {
@@ -391,16 +235,4 @@ type UpdateCustomerProfileResponse struct {
 type UpdateCustomerPaymentProfileResponse struct {
 	ANetApiResponse
 	ValidationDirectResponse string `json:"validationDirectResponse,omitempty"`
-}
-
-type FraudInformation struct {
-	FraudFilterList []string `json:"fraudFilterList"`
-	FraudAction     string   `json:"fraudAction"`
-}
-
-type ReturnedItem struct {
-	ErrMessage
-	Id        string    `json:"id"`
-	DateUTC   time.Time `json:"dateUTC"`
-	DateLocal time.Time `json:"dateLocal"`
 }

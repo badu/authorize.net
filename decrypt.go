@@ -26,6 +26,23 @@ type PaymentDetails struct {
 	Amount           string `json:"amount,omitempty"`
 }
 
+type CardArt struct {
+	CardBrand       string `json:"cardBrand,omitempty"`
+	CardImageHeight string `json:"cardImageHeight,omitempty"`
+	CardImageUrl    string `json:"cardImageUrl,omitempty"`
+	CardImageWidth  string `json:"cardImageWidth,omitempty"`
+	CardType        string `json:"cardType,omitempty"`
+}
+
+type CreditCardMasked struct {
+	CardNumber     string   `json:"cardNumber"`
+	ExpirationDate string   `json:"expirationDate"`
+	CardType       string   `json:"cardType,omitempty"`
+	CardArt        *CardArt `json:"cardArt,omitempty"`
+	IssuerNumber   string   `json:"issuerNumber,omitempty"`
+	IsPaymentToken bool     `json:"isPaymentToken,omitempty"`
+}
+
 type DecryptPaymentDataResponse struct {
 	ANetApiResponse
 	ShippingInfo   *CustomerAddress  `json:"shippingInfo,omitempty"`

@@ -20,6 +20,18 @@ type UpdateMerchantDetailsResponse struct {
 	ANetApiResponse
 }
 
+type Processor struct {
+	Name      string   `json:"name"`
+	Id        int      `json:"id"`
+	CardTypes []string `json:"cardTypes,omitempty"`
+}
+
+type ContactDetail struct {
+	Email     string `json:"email,omitempty"`
+	FirstName string `json:"firstName,omitempty"`
+	LastName  string `json:"lastName,omitempty"`
+}
+
 type GetMerchantDetailsResponse struct {
 	ANetApiResponse
 	IsTestMode          bool             `json:"isTestMode,omitempty"`

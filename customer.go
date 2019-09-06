@@ -88,6 +88,7 @@ type GetCustomerProfileIdsRequest struct {
 type DeleteCustomerProfileRequest struct {
 	Payload DeleteCustomerProfilePayload `json:"deleteCustomerProfileRequest"`
 }
+
 type DeleteCustomerProfilePayload struct {
 	ANetApiRequest
 	CustomerProfileId string `json:"customerProfileId"`
@@ -96,6 +97,7 @@ type DeleteCustomerProfilePayload struct {
 type UpdateCustomerProfileRequest struct {
 	Payload UpdateCustomerProfilePayload `json:"updateCustomerProfileRequest"`
 }
+
 type UpdateCustomerProfilePayload struct {
 	ANetApiRequest
 	Profile *CustomerProfileInfoEx `json:"profile,omitempty"`
@@ -104,6 +106,7 @@ type UpdateCustomerProfilePayload struct {
 type GetCustomerShippingAddressRequest struct {
 	Payload GetCustomerShippingAddressPayload `json:"getCustomerShippingAddressRequest"`
 }
+
 type GetCustomerShippingAddressPayload struct {
 	ANetApiRequest
 	CustomerProfileId string `json:"customerProfileId"`
@@ -113,6 +116,7 @@ type GetCustomerShippingAddressPayload struct {
 type GetTransactionListForCustomerRequest struct {
 	Payload GetTransactionListForCustomerPayload `json:"getTransactionListForCustomerRequest"`
 }
+
 type GetTransactionListForCustomerPayload struct {
 	ANetApiRequest
 	CustomerProfileId        string  `json:"customerProfileId"`
@@ -124,6 +128,7 @@ type GetTransactionListForCustomerPayload struct {
 type DeleteCustomerPaymentProfileRequest struct {
 	Payload DeleteCustomerPaymentProfilePayload `json:"deleteCustomerPaymentProfileRequest"`
 }
+
 type DeleteCustomerPaymentProfilePayload struct {
 	ANetApiRequest
 	CustomerProfileId        string `json:"customerProfileId"`
@@ -133,6 +138,7 @@ type DeleteCustomerPaymentProfilePayload struct {
 type CreateCustomerShippingAddressRequest struct {
 	Payload CreateCustomerShippingAddressPayload `json:"createCustomerShippingAddressRequest"`
 }
+
 type CreateCustomerShippingAddressPayload struct {
 	ANetApiRequest
 	CustomerProfileId      string           `json:"customerProfileId"`
@@ -143,6 +149,7 @@ type CreateCustomerShippingAddressPayload struct {
 type GetCustomerPaymentProfileNonceRequest struct {
 	Payload GetCustomerPaymentProfileNoncePayload `json:"getCustomerPaymentProfileNonceRequest"`
 }
+
 type GetCustomerPaymentProfileNoncePayload struct {
 	ANetApiRequest
 	ConnectedAccessToken     string `json:"connectedAccessToken"`
@@ -153,6 +160,12 @@ type GetCustomerPaymentProfileNoncePayload struct {
 type UpdateCustomerPaymentProfileRequest struct {
 	Payload UpdateCustomerPaymentProfilePayload `json:"updateCustomerPaymentProfileRequest"`
 }
+
+type CustomerPaymentProfileEx struct {
+	CustomerPaymentProfile
+	CustomerPaymentProfileId string `json:"customerPaymentProfileId,omitempty"`
+}
+
 type UpdateCustomerPaymentProfilePayload struct {
 	ANetApiRequest
 	CustomerProfileId string                    `json:"customerProfileId"`
@@ -163,6 +176,7 @@ type UpdateCustomerPaymentProfilePayload struct {
 type ValidateCustomerPaymentProfileRequest struct {
 	Payload ValidateCustomerPaymentProfilePayload `json:"validateCustomerPaymentProfileRequest"`
 }
+
 type ValidateCustomerPaymentProfilePayload struct {
 	ANetApiRequest
 	CustomerProfileId         string             `json:"customerProfileId"`
@@ -244,6 +258,7 @@ type CreateCustomerProfileTransactionPayload struct {
 type DeleteCustomerShippingAddressRequest struct {
 	Payload DeleteCustomerShippingAddressPayload `json:"deleteCustomerShippingAddressRequest"`
 }
+
 type DeleteCustomerShippingAddressPayload struct {
 	ANetApiRequest
 	CustomerProfileId string `json:"customerProfileId"`
@@ -253,6 +268,7 @@ type DeleteCustomerShippingAddressPayload struct {
 type CreateCustomerPaymentProfileRequest struct {
 	Payload CreateCustomerPaymentProfilePayload `json:"createCustomerPaymentProfileRequest"`
 }
+
 type CreateCustomerPaymentProfilePayload struct {
 	ANetApiRequest
 	CustomerProfileId string                  `json:"customerProfileId"`
@@ -276,6 +292,13 @@ type BankAccountMasked struct {
 	NameOnAccount string              `json:"nameOnAccount"`
 	EcheckType    string              `json:"echeckType,omitempty"`
 	BankName      string              `json:"bankName,omitempty"`
+}
+
+type TokenMasked struct {
+	TokenSource      string `json:"tokenSource,omitempty"`
+	TokenNumber      string `json:"tokenNumber"`
+	ExpirationDate   string `json:"expirationDate"`
+	TokenRequestorId string `json:"tokenRequestorId,omitempty"`
 }
 
 type PaymentMasked struct {

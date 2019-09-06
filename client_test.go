@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 const (
@@ -42,7 +41,9 @@ func ExampleAuthenticateTest() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%+v", response)
 	// Output: {RefId: Messages:{ResultCode:Ok Messages:[{Code:Successful. Text:Successful. Description:}]} SessionToken:}
 }
@@ -83,6 +84,9 @@ func ExampleChargeCreditCard() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%+v", response.TransactionResponse.Messages)
 	// Output: [{Code:This transaction has been approved. Text: Description:This transaction has been approved.}]
 }
@@ -115,13 +119,15 @@ func ExampleRefund() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-	var voidResponse CreateTransactionResponse
-	if err := client.do(refundRequest, &voidResponse, false); err != nil {
+	var response CreateTransactionResponse
+	if err := client.do(refundRequest, &response, false); err != nil {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
-	fmt.Printf("%+v", voidResponse.TransactionResponse.Messages)
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%+v", response.TransactionResponse.Messages)
 	// Output: [{Code:This transaction has been approved. Text: Description:This transaction has been approved.}]
 
 }
@@ -194,7 +200,9 @@ func ExampleVoid() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%+v", voidResponse.TransactionResponse.Messages)
 	// Output: [{Code:This transaction has been approved. Text: Description:This transaction has been approved.}]
 
@@ -258,7 +266,9 @@ func ExampleCreateCustomerProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%+v", response)
 	// Output: {ANetApiResponse:{RefId: Messages:{ResultCode:Error Messages:[{Code:A duplicate record already exists. Text:A duplicate record with ID 1920441543 already exists. Description:}]} SessionToken:} CustomerProfileId: CustomerPaymentProfileIdList:[] CustomerShippingAddressIdList:[] ValidationDirectResponseList:[1,1,1,(TESTMODE) This transaction has been approved.,000000,P,0,none,Test transaction for ValidateCustomerPaymentProfile.,1.00,CC,auth_only,5KP3u95bQpv,Popescu,Grigore,,,,,,Romania,030030020,,,,,,,,,,,0.00,0.00,0.00,FALSE,none,,,,,,,,,,,,,,XXXX0015,MasterCard,,,,,,,,,,,,,,,,,]}
 
@@ -291,7 +301,9 @@ func ExampleGetCustomerProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%s\n", response.Profile.CustomerProfileId)
 	for _, pp := range response.Profile.PaymentProfiles {
 		fmt.Printf("%s", pp.CustomerPaymentProfileId)
@@ -336,6 +348,9 @@ func ExampleUpdateCustomerProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.UpdateCustomerProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}}
 
@@ -366,7 +381,9 @@ func ExampleDeleteCustomerProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v\n", response)
 	// Output: authorize_net.DeleteCustomerProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}}
 }
@@ -399,7 +416,9 @@ func ExampleGetCustomerPaymentProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%s\n", response.PaymentProfile.CustomerProfileId)
 	fmt.Printf("%s\n", response.PaymentProfile.CustomerPaymentProfileId)
 	// Output: 1920441543
@@ -440,6 +459,9 @@ func ExampleGetCustomerPaymentProfileList() {
 		client.log.Printf("Error : %v\n", err)
 		fmt.Printf("Error : %v", err)
 		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
 	}
 	fmt.Printf("%d\n", response.TotalNumInResultSet)
 	for _, pp := range response.PaymentProfiles {
@@ -482,6 +504,9 @@ func ExampleGetCustomerProfileIds() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	for idx, id := range response.Ids {
 		if idx > 5 {
 			break
@@ -519,6 +544,9 @@ func ExampleGetMerchantDetails() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.GetMerchantDetailsResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, IsTestMode:false, Processors:[]authorize_net.Processor{authorize_net.Processor{Name:"First Data Nashville", Id:2, CardTypes:[]string{"A", "D", "M", "V"}}}, MerchantName:"Test Developer", GatewayId:"475314", MarketTypes:[]string{"eCommerce"}, ProductCodes:[]string{"CNP"}, PaymentMethods:[]string{"AmericanExpress", "Discover", "Echeck", "MasterCard", "Paypal", "Visa", "VisaCheckout", "ApplePay", "AndroidPay"}, Currencies:[]string{"USD"}, PublicClientKey:"5FcB6WrfHGS76gHW3v7btBCE3HuuBuke9Pj96Ztfn5R32G5ep42vne7MCWZtAucY", BusinessInformation:(*authorize_net.CustomerAddress)(0xc0003e4000), MerchantTimeZone:"America/Los_Angeles", ContactDetails:[]authorize_net.ContactDetail{authorize_net.ContactDetail{Email:"bmcmanus@visa.com", FirstName:"Sandbox", LastName:"Default"}}}
 }
@@ -549,7 +577,9 @@ func ExampleUpdateMerchantDetails() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.UpdateMerchantDetailsResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Error", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x47, Text:"The authentication type is not allowed for this method call.", Description:""}}}, SessionToken:""}}
 }
@@ -581,7 +611,9 @@ func ExampleGetCustomerShippingAddress() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response.Address)
 	// Output: &authorize_net.CustomerAddressEx{CustomerAddress:authorize_net.CustomerAddress{NameAndAddress:authorize_net.NameAndAddress{FirstName:"Newfirstname", LastName:"Doe", Company:"", Address:"123 Main St.", City:"Bellevue", State:"WA", Zip:"98004", Country:"USA"}, PhoneNumber:"000-000-0000", FaxNumber:"", Email:""}, CustomerAddressId:"1810861269"}
 }
@@ -627,7 +659,9 @@ func ExampleCreateCustomerShippingAddress() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.CreateCustomerShippingAddressResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, CustomerProfileId:"1920672921", CustomerAddressId:"1877745883"}
 }
@@ -676,7 +710,9 @@ func ExampleUpdateCustomerShippingAddress() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.UpdateCustomerShippingAddressResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}}
 
@@ -709,7 +745,9 @@ func ExampleDeleteCustomerShippingAddress() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.DeleteCustomerShippingAddressResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}}
 
@@ -749,7 +787,9 @@ func ExampleCreateCustomerProfileFromTransaction() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.CreateCustomerProfileFromTransactionResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Error", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x70, Text:"Customer profile creation failed. This transaction type does not support profile creation.", Description:""}}}, SessionToken:""}, CustomerProfileID:"", CustomerPaymentProfileIDList:[]string{}, CustomerShippingAddressIDList:[]string{}, ValidationDirectResponseList:[]string{}}
 
@@ -800,7 +840,7 @@ func ExampleCreateCustomerProfileTransaction() {
 							VatInvoiceReferenceNumber:      "",
 							PurchaserCode:                  "1234",
 							SummaryCommodityCode:           "",
-							PurchaseOrderDateUTC:           time.Now().UTC().Format("2006-01-02"),
+							PurchaseOrderDateUTC:           Now(),
 							SupplierOrderReference:         "",
 							AuthorizedContactName:          "",
 							CardAcceptorRefNumber:          "",
@@ -838,7 +878,9 @@ func ExampleCreateCustomerProfileTransaction() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.CreateCustomerProfileTransactionResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, TransactionResponse:(*authorize_net.TransactionResponse)(nil), DirectResponse:"1,1,1,This transaction has been approved.,N0SU5L,Y,60126781190,INV001,,10.00,CC,auth_capture,,John,Smith,,,,,,,,,,,,,,,,,,10.00,10.00,10.00,TRUE,,,P,2,,,,,,,,,,,XXXX1111,Visa,,,,,,,,,,,,,,,,,"}
 }
@@ -891,7 +933,9 @@ func ExampleCreateCustomerPaymentProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.CreateCustomerPaymentProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, CustomerProfileId:"1920672070", CustomerPaymentProfileId:"1833657059", ValidationDirectResponse:"1,1,1,(TESTMODE) This transaction has been approved.,000000,P,0,none,Test transaction for ValidateCustomerPaymentProfile.,1.00,CC,auth_only,none,Johnny,Doe,,,,,,USA,,,email@example.com,,,,,,,,,0.00,0.00,0.00,FALSE,none,,,,,,,,,,,,,,XXXX0015,MasterCard,,,,,,,,,,,,,,,,,"}
 
@@ -925,7 +969,9 @@ func ExampleValidateCustomerPaymentProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.ValidateCustomerPaymentProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, DirectResponse:"1,1,1,(TESTMODE) This transaction has been approved.,000000,P,0,none,Test transaction for ValidateCustomerPaymentProfile.,1.00,CC,auth_only,jdoe4801,Johnny,Doe,,,,,,USA,,,4953@mail.com,,,,,,,,,0.00,0.00,0.00,FALSE,none,,,,,,,,,,,,,,XXXX0015,MasterCard,,,,,,,,,,,,,,,,,"}
 
@@ -984,7 +1030,9 @@ func ExampleUpdateCustomerPaymentProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.UpdateCustomerPaymentProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}, ValidationDirectResponse:""}
 
@@ -1017,7 +1065,9 @@ func ExampleDeleteCustomerPaymentProfile() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response)
 	// Output: authorize_net.DeleteCustomerPaymentProfileResponse{ANetApiResponse:authorize_net.ANetApiResponse{RefId:"", Messages:authorize_net.Messages{ResultCode:"Ok", Messages:[]authorize_net.ErrMessage{authorize_net.ErrMessage{Code:0x1, Text:"Successful.", Description:""}}}, SessionToken:""}}
 
@@ -1053,6 +1103,9 @@ func ExampleDecryptPaymentData() {
 		client.log.Printf("Error : %v\n", err)
 		fmt.Printf("Error : %v", err)
 		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
 	}
 	// Note : for some reason it always return an error
 	fmt.Printf("%#v", response)
@@ -1094,6 +1147,9 @@ func ExampleGetTransactionListForCustomer() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	for _, trans := range response.Transactions {
 		fmt.Printf("%#v\n", trans.TransId)
 	}
@@ -1129,7 +1185,10 @@ func ExampleSendCustomerTransactionReceipt() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
-	fmt.Sprintf("%v", response)
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%v", response)
 	// Output:
 }
 
@@ -1158,6 +1217,9 @@ func ExampleGetTransactionDetails() {
 		client.log.Printf("Error : %v\n", err)
 		fmt.Printf("Error : %v", err)
 		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
 	}
 	fmt.Printf("%#v", response.Transaction.Batch.BatchId)
 	// Output: "9697004"
@@ -1197,6 +1259,9 @@ func ExampleGetTransactionList() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response.TotalNumInResultSet)
 	// Output: 50
 
@@ -1235,47 +1300,259 @@ func ExampleGetUnsettledTransactionList() {
 		fmt.Printf("Error : %v", err)
 		return
 	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
 	fmt.Printf("%#v", response.TotalNumInResultSet)
 	// Output: 50
 }
 
-func ExampleANetApi() {
+func ExampleARBCreateSubscription() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	payload := ARBCreateSubscriptionRequest{
+		Payload: ARBCreateSubscriptionPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			Subscription: ARBSubscription{
+				Name: "Sample",
+				PaymentSchedule: &PaymentSchedule{
+					Interval: &PaymentScheduleTypeInterval{
+						Length: 1,
+						Unit:   Months,
+					},
+					StartDate:        NowTime(),
+					TotalOccurrences: 12,
+					TrialOccurrences: 1,
+				},
+				Amount:      10.29,
+				TrialAmount: 0.00,
+				Payment: &Payment{
+					CreditCard: &CreditCard{
+						CardNumber:     cardExample,
+						ExpirationDate: cardExpirationDate,
+						CardCode:       cardCode,
+						IsPaymentToken: false,
+					},
+				},
+				BillTo: &NameAndAddress{
+					FirstName: "Papas",
+					LastName:  "RollingStone",
+				},
+			},
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
 
+	var response ARBCreateSubscriptionResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%#v", response.Messages.ResultCode)
+	// Output: "Ok"
 }
 
 func ExampleARBCancelSubscription() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	payload := ARBCancelSubscriptionRequest{
+		Payload: ARBCancelSubscriptionPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			SubscriptionId: "5982761",
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
 
+	var response ARBCancelSubscriptionResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%#v", response.Messages.ResultCode)
+	// Output: "Ok"
 }
 
-func ExampleARBCreateSubscription() {
+func ExampleARBGetSubscriptionList() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	payload := ARBGetSubscriptionListRequest{
+		Payload: ARBGetSubscriptionListPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			SearchType: "subscriptionActive",
+			Sorting: Sorting{
+				OrderBy:         "id",
+				OrderDescending: false,
+			},
+			Paging: Paging{
+				Limit:  1,
+				Offset: 100,
+			},
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	var response ARBGetSubscriptionListResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	for _, subscription := range response.SubscriptionDetails {
+		fmt.Printf("%#v", subscription.Id)
+	}
+	// Output: "5517694"
 
 }
 
 func ExampleARBGetSubscription() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	payload := ARBGetSubscriptionRequest{
+		Payload: ARBGetSubscriptionPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			SubscriptionId: "5517694",
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
 
-}
-
-func ExampleARBGetSubscriptionList() {
-	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	var response ARBGetSubscriptionResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%#v", response.Subscription.Name)
+	// Output: "Sample Subscription"
 
 }
 
 func ExampleARBGetSubscriptionStatus() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
-	fmt.Sprintf("%v", client)
+	payload := ARBGetSubscriptionStatusRequest{
+		Payload: ARBGetSubscriptionStatusPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			SubscriptionId: "5517694",
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	var response ARBGetSubscriptionStatusResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%#v", response.Status)
+	// Output: "active"
 
 }
 
 func ExampleARBUpdateSubscription() {
+	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
+	payload := ARBUpdateSubscriptionRequest{
+		Payload: ARBUpdateSubscriptionPayload{
+			ANetApiRequest: ANetApiRequest{
+				MerchantAuthentication: MerchantAuthentication{
+					Name:           merchantId,
+					TransactionKey: merchantSecret,
+				},
+			},
+			SubscriptionId: "5517694",
+			Subscription: ARBSubscription{
+				Name: "Updated Subscription",
+				Payment: &Payment{
+					CreditCard: &CreditCard{
+						CardNumber:     "4111111111111111",
+						ExpirationDate: "2022-12",
+					},
+				},
+			},
+		},
+	}
+	request, err := client.prepareRequest(context.Background(), SandboxEndpoint, http.MethodPost, &payload)
+	if err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+
+	var response ARBUpdateSubscriptionResponse
+	if err := client.do(request, &response, false); err != nil {
+		client.log.Printf("Error : %v\n", err)
+		fmt.Printf("Error : %v", err)
+		return
+	}
+	if response.Messages.ResultCode == "Error" {
+		fmt.Printf("%#v", response)
+	}
+	fmt.Printf("%#v", response.Messages.ResultCode)
+	// Output: "Ok"
+}
+
+func ExampleANetApi() {
 	client := NewAPIClient(nil, log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile))
 	fmt.Sprintf("%v", client)
 

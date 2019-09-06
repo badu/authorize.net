@@ -1,8 +1,6 @@
 package authorize_net
 
 import (
-	"encoding/json"
-	"fmt"
 	"time"
 )
 
@@ -31,6 +29,16 @@ type BankAccount struct {
 type CreditCardTrack struct {
 	Track1 string `json:"track1"`
 	Track2 string `json:"track2"`
+}
+
+type KeyValue struct {
+	Encoding            string               `json:"encoding"`
+	EncryptionAlgorithm string               `json:"encryptionAlgorithm"`
+	Scheme              *KeyManagementScheme `json:"scheme,omitempty"`
+}
+
+type KeyBlock struct {
+	Value KeyValue `json:"value"`
 }
 
 type EncryptedTrackData struct {
@@ -99,7 +107,7 @@ type Order struct {
 	VatInvoiceReferenceNumber      string  `json:"vatInvoiceReferenceNumber,omitempty"`
 	PurchaserCode                  string  `json:"purchaserCode,omitempty"`
 	SummaryCommodityCode           string  `json:"summaryCommodityCode,omitempty"`
-	PurchaseOrderDateUTC           string  `json:"purchaseOrderDateUTC,omitempty"` //was Date
+	PurchaseOrderDateUTC           Date    `json:"purchaseOrderDateUTC,omitempty"`
 	SupplierOrderReference         string  `json:"supplierOrderReference,omitempty"`
 	AuthorizedContactName          string  `json:"authorizedContactName,omitempty"`
 	CardAcceptorRefNumber          string  `json:"cardAcceptorRefNumber,omitempty"`
@@ -362,10 +370,15 @@ type CreateTransactionResponse struct {
 	ProfileResponse     CreateProfileResponse `json:"profileResponse,omitempty"`
 }
 
+type FraudInformation struct {
+	FraudFilterList []string `json:"fraudFilterList"`
+	FraudAction     string   `json:"fraudAction"`
+}
+
 type TransactionSummary struct {
 	TransId           string               `json:"transId"`
-	SubmitTimeUTC     time.Time            `json:"submitTimeUTC"`
-	SubmitTimeLocal   time.Time            `json:"submitTimeLocal"`
+	SubmitTimeUTC     DateTimeZ            `json:"submitTimeUTC"`
+	SubmitTimeLocal   DateTime             `json:"submitTimeLocal"`
 	TransactionStatus string               `json:"transactionStatus"`
 	InvoiceNumber     string               `json:"invoiceNumber,omitempty"`
 	FirstName         string               `json:"firstName,omitempty"`
@@ -382,35 +395,6 @@ type TransactionSummary struct {
 	Profile           *CustomerProfileId   `json:"profile,omitempty"`
 }
 
-const (
-	// RFC3339 a subset of the ISO8601 timestamp format. e.g 2014-04-29T18:30:38Z
-	ISO8601TimeFormat = "2006-01-02T15:04:05Z"
-	// same as above, but no ”Z”
-	ISO8601NoZTimeFormat = "2006-01-02T15:04:05"
-)
-
-func (t *TransactionSummary) UnmarshalJSON(data []byte) error {
-	type Alias TransactionSummary
-	aux := &struct {
-		SubmitTimeUTC   string `json:"submitTimeUTC"`
-		SubmitTimeLocal string `json:"submitTimeLocal"`
-		*Alias
-	}{
-		Alias: (*Alias)(t),
-	}
-	var err error
-	if err = json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	if t.SubmitTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.SubmitTimeUTC); err != nil {
-		return err
-	}
-	if t.SubmitTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.SubmitTimeLocal); err != nil {
-		return err
-	}
-	return nil
-}
-
 type GetTransactionListResponse struct {
 	ANetApiResponse
 	Transactions        []TransactionSummary `json:"transactions,omitempty"`
@@ -419,6 +403,11 @@ type GetTransactionListResponse struct {
 
 type SendCustomerTransactionReceiptRequest struct {
 	Payload SendCustomerTransactionReceiptPayload `json:"sendCustomerTransactionReceiptRequest"`
+}
+
+type EmailSettings struct {
+	Settings []Setting
+	Version  int `json:"version,omitempty"`
 }
 
 type SendCustomerTransactionReceiptPayload struct {
@@ -440,10 +429,34 @@ type GetTransactionDetailsPayload struct {
 	TransId string `json:"transId"`
 }
 
+type BatchStatistic struct {
+	AccountType               string  `json:"accountType"`
+	ChargeAmount              float64 `json:"chargeAmount"`
+	ChargeCount               int     `json:"chargeCount"`
+	RefundAmount              float64 `json:"refundAmount"`
+	RefundCount               int     `json:"refundCount"`
+	VoidCount                 int     `json:"voidCount"`
+	DeclineCount              int     `json:"declineCount"`
+	ErrorCount                int     `json:"errorCount"`
+	ReturnedItemAmount        float64 `json:"returnedItemAmount,omitempty"`
+	ReturnedItemCount         int     `json:"returnedItemCount,omitempty"`
+	ChargebackAmount          float64 `json:"chargebackAmount,omitempty"`
+	ChargebackCount           int     `json:"chargebackCount,omitempty"`
+	CorrectionNoticeCount     int     `json:"correctionNoticeCount,omitempty"`
+	ChargeChargeBackAmount    float64 `json:"chargeChargeBackAmount,omitempty"`
+	ChargeChargeBackCount     int     `json:"chargeChargeBackCount,omitempty"`
+	RefundChargeBackAmount    float64 `json:"refundChargeBackAmount,omitempty"`
+	RefundChargeBackCount     int     `json:"refundChargeBackCount,omitempty"`
+	ChargeReturnedItemsAmount float64 `json:"chargeReturnedItemsAmount,omitempty"`
+	ChargeReturnedItemsCount  int     `json:"chargeReturnedItemsCount,omitempty"`
+	RefundReturnedItemsAmount float64 `json:"refundReturnedItemsAmount,omitempty"`
+	RefundReturnedItemsCount  int     `json:"refundReturnedItemsCount,omitempty"`
+}
+
 type BatchDetails struct {
 	BatchId             string           `json:"batchId"`
-	SettlementTimeUTC   time.Time        `json:"settlementTimeUTC,omitempty"`
-	SettlementTimeLocal time.Time        `json:"settlementTimeLocal,omitempty"`
+	SettlementTimeUTC   DateTimeZ        `json:"settlementTimeUTC,omitempty"`
+	SettlementTimeLocal DateTime         `json:"settlementTimeLocal,omitempty"`
 	SettlementState     string           `json:"settlementState"`
 	PaymentMethod       string           `json:"paymentMethod,omitempty"`
 	MarketType          string           `json:"marketType,omitempty"`
@@ -451,12 +464,43 @@ type BatchDetails struct {
 	Statistics          []BatchStatistic `json:"statistics,omitempty"`
 }
 
+type TransactionDetailsTypeEmvDetailsTag struct {
+	TagId string `json:"tagId"`
+	Data  string `json:"data"`
+}
+
+type TransactionDetailsTypeEmvDetails struct {
+	Tag []TransactionDetailsTypeEmvDetailsTag `json:"tag"` //min=0
+}
+
+type SubscriptionPayment struct {
+	Id     int `json:"id"`
+	PayNum int `json:"payNum"`
+}
+
+type FDSFilter struct {
+	Name   string `json:"name"`
+	Action string `json:"action"`
+}
+
+type ReturnedItem struct {
+	ErrMessage
+	Id        string    `json:"id"`
+	DateUTC   DateTimeZ `json:"dateUTC"`
+	DateLocal DateTime  `json:"dateLocal"`
+}
+
+type OrderEx struct {
+	Order
+	PurchaseOrderNumber string `json:"purchaseOrderNumber,omitempty"`
+}
+
 type TransactionDetails struct {
 	TransId                   string                            `json:"transId"`
 	RefTransId                string                            `json:"refTransId,omitempty"`
 	SplitTenderId             string                            `json:"splitTenderId,omitempty"`
-	SubmitTimeUTC             time.Time                         `json:"submitTimeUTC"`
-	SubmitTimeLocal           time.Time                         `json:"submitTimeLocal"`
+	SubmitTimeUTC             DateTimeZ                         `json:"submitTimeUTC"`
+	SubmitTimeLocal           DateTime                          `json:"submitTimeLocal"`
 	TransactionType           string                            `json:"transactionType"`
 	TransactionStatus         string                            `json:"transactionStatus"`
 	ResponseCode              int                               `json:"responseCode"`
@@ -500,56 +544,6 @@ type TransactionDetails struct {
 	Tip                       *ExtendedAmount                   `json:"tip,omitempty"`
 	OtherTax                  *OtherTax                         `json:"otherTax,omitempty"`
 	ShipFrom                  *NameAndAddress                   `json:"shipFrom,omitempty"`
-}
-
-func (t *TransactionDetails) UnmarshalJSON(data []byte) error {
-	type Alias TransactionDetails
-	type BatchDetailsNoTime struct {
-		BatchId             string           `json:"batchId"`
-		SettlementTimeUTC   string           `json:"settlementTimeUTC,omitempty"`
-		SettlementTimeLocal string           `json:"settlementTimeLocal,omitempty"`
-		SettlementState     string           `json:"settlementState"`
-		PaymentMethod       string           `json:"paymentMethod,omitempty"`
-		MarketType          string           `json:"marketType,omitempty"`
-		Product             string           `json:"product,omitempty"`
-		Statistics          []BatchStatistic `json:"statistics,omitempty"`
-	}
-	aux := &struct {
-		SubmitTimeUTC   string `json:"submitTimeUTC"`
-		SubmitTimeLocal string `json:"submitTimeLocal"`
-		*Alias
-		Batch *BatchDetailsNoTime `json:"batch,omitempty"`
-	}{
-		Alias: (*Alias)(t),
-	}
-	var err error
-	if err = json.Unmarshal(data, &aux); err != nil {
-		fmt.Println("HERE")
-		return err
-	}
-	if t.SubmitTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.SubmitTimeUTC); err != nil {
-		return err
-	}
-	if t.SubmitTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.SubmitTimeLocal); err != nil {
-		return err
-	}
-	if aux.Batch != nil {
-		t.Batch = &BatchDetails{
-			BatchId:         aux.Batch.BatchId,
-			SettlementState: aux.Batch.SettlementState,
-			PaymentMethod:   aux.Batch.PaymentMethod,
-			MarketType:      aux.Batch.MarketType,
-			Product:         aux.Batch.Product,
-			Statistics:      aux.Batch.Statistics,
-		}
-		if t.Batch.SettlementTimeUTC, err = time.Parse(ISO8601TimeFormat, aux.Batch.SettlementTimeUTC); err != nil {
-			return err
-		}
-		if t.Batch.SettlementTimeLocal, err = time.Parse(ISO8601NoZTimeFormat, aux.Batch.SettlementTimeLocal); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 type GetTransactionDetailsResponse struct {
